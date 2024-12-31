@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.jsdelivr.net/gh/chickencuber/jsquery@latest/jsquery.min.js"></script>
+    <meta charset="utf-8" />
+
+  </head>
+  <body>
+    <main>
+        <button id="import">Import</button>
+        <button id="export">Export</button>
+        <button id="add">Add</button>
+        <select id="character"></select>
+        <button id="delete">Delete</button>
+        <input id="name" placeholder="name" required value="name"/>
+        <input type="file" hidden id="file" accept=".bff"/>
+        <input type="number" id="width" min=1 max=255 value=8 required>
+        <input type="number" id="height" min=1 max=255 value=8 required>
+        <div id="container"></div>
+    </main>
+    <script src="parser.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
+
