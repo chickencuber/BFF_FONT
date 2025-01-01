@@ -1,10 +1,15 @@
 //this is NOT compatible with old version of the bff format!
 //this is just a better version of the old version
 /*format
+va: u8
+vb: u8
+vc: u8
+# ^makes up the version number ([a].[b].[c])
 width: u8
 height: u8
-char: u8 
+char_amount: u8
 [
+char: u8 
 [line [u8(ceil width/8)]](height)
 ](char amount)
 */
@@ -54,8 +59,10 @@ const BFF = (() => {
         compile() {
             if(!this.glyphs[".notdef"]) throw new Error("you need the .notdef char");
             const v = [];
+            v.push(0, 0, 1); // 0.0.1
             v.push(this.width);
             v.push(this.height);
+            v.push(Object.keys(this.glyphs).length);
             for(const [name, value] of Object.entries(this.glyphs)) {
                 v.push(name === ".notdef"? 0: name.charCodeAt(0));
                 for(let y = 0; y < this.height; y++) {
@@ -74,18 +81,14 @@ const BFF = (() => {
             }
             return Uint8Array.from(v);
         }
-        /**
-        * @param {Uint8Array} data
-        * @returns this
-        */
-        static from(data) {
-            const _data = Array.from(data);
+        static _from_0_0_1(_data) {
             const width = _data.shift();
             const height = _data.shift(); 
+            const char_amount = _data.shift();
             const amount =  Math.ceil(width/8);
             const change = 8*amount-width;
             const font = new this(width, height);
-            while(true) {
+            for(let _ = 0; _ < char_amount; _++) {
                 if(_data.length === 0) break;
                 let char = _data.shift();
                 char = char === 0? ".notdef": String.fromCharCode(char);
@@ -100,6 +103,18 @@ const BFF = (() => {
                 font.addGlyph(char, this.glyph(...glyph));
             }
             return font;
+
+        }
+        /**
+        * @param {Uint8Array} data
+        * @returns this
+        */
+        static from(data) {
+            const _data = Array.from(data);
+            const a = _data.shift();
+            const b = _data.shift();
+            const c = _data.shift();
+            return this[`_from_${a}_${b}_${c}`](_data);
         }
         /**
             * @param {...string} args 
