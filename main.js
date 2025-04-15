@@ -1,6 +1,8 @@
 let font = new BFF.Font();
 function fill() {
     if(!($("#width").is(":valid") && $("#height").is(":valid"))) return;
+    $("#height_var").value($("#height").value());
+    $("#width_var").value($("#width").value());
     const width = parseInt($("#width").value());
     const height = parseInt($("#height").value());
     const v = $("#container");
@@ -12,7 +14,7 @@ function fill() {
                 const x = parseInt(self.getProp("x"));
                 const y = parseInt(self.getProp("y"));
                 if(!$("#character").value()) return;
-                font.glyphs[$("#character").value()][y][x] = !self.is("[on]");
+                font.glyphs[$("#character").value()][y][x].glyph = !self.is("[on]");
                 if(self.is("[on]")) {
                     self.elt.removeAttribute("on");
                 } else {
@@ -59,7 +61,37 @@ $("#delete").click(() => {
     }
 });
 
-function changed() {
+let variable = false;
+$("#width_var").on("change", changed.bind(null, true));
+$("#height_var").on("change", changed.bind(null, true));
+
+$("#variable").on("change", () => {
+    if($("#variable").checked()) {
+        let variable = true;
+        $.all(".var").forEach(v => {
+            v.elt.removeAttribute("hidden")
+            if(v.id() == "width_var") {
+                v.value($("#width").value());
+                font.glyphs[$("#character").value()].width = parseInt($("#width").value());
+            } else {
+                v.value($("#height").value());
+                font.glyphs[$("#character").value()].height = parseInt($("#height").value())
+            }
+        });
+        changed(true);
+    } else {
+        let variable = false;
+        $.all(".var").props({
+            hidden: "",
+        });
+        font.glyphs[$("#character").value()].width = 0;
+        font.glyphs[$("#character").value()].height = 0;
+        font.glyphs[$("#character").value()].glyph = font.emptyGlyph.glyph;
+        changed();
+    }
+})
+
+function changed(h = false) {
     if(!$("#character").value()) {
         for(let y = 0; y < font.height; y++) {
             for(let x = 0; x < font.width; x++) {
@@ -69,14 +101,65 @@ function changed() {
         return;
     }
     const glyph = font.glyphs[$("#character").value()];
-    for(let y = 0; y < font.height; y++) {
-        for(let x = 0; x < font.width; x++) {
-            if(glyph[y][x]) {
-                $(`#container>[x="${x}"][y="${y}"]`).props({on:""});
-            } else {
-                $(`#container>[x="${x}"][y="${y}"]`).elt.removeAttribute("on");
-            }
+    if(!(h===true)) {
+        if(glyph.width !== 0) {
+            variable = true;
+            $("#height_var").value(glyph.height)
+            $("#width_var").value(glyph.width)
+        } else {
+            variable = false;
+            $("#height_var").value($("#height").value());
+            $("#width_var").value($("#width").value());
         }
+    }
+    const width = parseInt($("#width_var").value());
+    const height = parseInt($("#height_var").value());
+    if(h===true) {
+        glyph.width = width;
+        glyph.height = height;
+        glyph.glyph = (new BFF.Font(width, height)).emptyGlyph.glyph;
+    } else {
+        if(glyph.width === 0) {
+            $("#variable").checked(false);
+            variable = false;
+            $.all(".var").props({
+                hidden: "",
+            });
+        } else {
+            $("#variable").checked(true);
+            variable = true;
+            $.all(".var").forEach(v => {
+                v.elt.removeAttribute("hidden")
+            });
+        }
+    }
+    const v = $("#container");
+    v.children.remove();
+    for(let  y = 0; y < height; y++) {
+        for(let x = 0; x < width; x++) {
+            const b = $.create("button").class("pixel").on("mousedown", function () {
+                const self = $.from(this);
+                const x = parseInt(self.getProp("x"));
+                const y = parseInt(self.getProp("y"));
+                if(!$("#character").value()) return;
+                font.glyphs[$("#character").value()][y][x].glyph = !self.is("[on]");
+                if(self.is("[on]")) {
+                    self.elt.removeAttribute("on");
+                } else {
+                    self.props({on: ""});
+                }
+            }).props({
+                x, y
+            })
+            if(!glyph.glyph[y]) {
+                glyph.glyph[y] = x;
+            }
+            if(glyph.glyph[y][x]) {
+                b.props({on:""})
+            }
+            v.child(b);
+        }
+        v.child($.create("br"));
     }
 }
 
