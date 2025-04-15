@@ -207,7 +207,6 @@ $("#export").click(() => {
 });
 
 $("#file").on("change", async (e) => {
-    $("main").html($("main").html());
     const [name, arr] = await handleFileInput(e);
     const newfont = BFF.Font.from(arr);
     $("#name").value(name);
