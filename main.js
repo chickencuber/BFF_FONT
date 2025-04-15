@@ -212,6 +212,7 @@ $("#file").on("change", async (e) => {
     $("#name").value(name);
     $("#width").value(newfont.width);
     $("#height").value(newfont.height);
+    font = newfont;
     fill(); 
     font = newfont;
     for(const value in font.glyphs) {
