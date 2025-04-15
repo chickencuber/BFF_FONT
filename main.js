@@ -14,7 +14,7 @@ function fill() {
                 const x = parseInt(self.getProp("x"));
                 const y = parseInt(self.getProp("y"));
                 if(!$("#character").value()) return;
-                font.glyphs[$("#character").value()][y][x].glyph = !self.is("[on]");
+                font.glyphs[$("#character").value()].glyph[y][x] = !self.is("[on]");
                 if(self.is("[on]")) {
                     self.elt.removeAttribute("on");
                 } else {
@@ -142,7 +142,7 @@ function changed(h = false) {
                 const x = parseInt(self.getProp("x"));
                 const y = parseInt(self.getProp("y"));
                 if(!$("#character").value()) return;
-                font.glyphs[$("#character").value()][y][x].glyph = !self.is("[on]");
+                font.glyphs[$("#character").value()].glyph[y][x] = !self.is("[on]");
                 if(self.is("[on]")) {
                     self.elt.removeAttribute("on");
                 } else {
@@ -207,6 +207,7 @@ $("#export").click(() => {
 });
 
 $("#file").on("change", async (e) => {
+    $("main").html($("main").html());
     const [name, arr] = await handleFileInput(e);
     const newfont = BFF.Font.from(arr);
     $("#name").value(name);
