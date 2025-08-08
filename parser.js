@@ -59,6 +59,7 @@ const BFF = (() => {
         compile() {
             if(!this.glyphs[".notdef"]) throw new Error("you need the .notdef char");
             const v = [];
+            v.push("B".charCodeAt(0), "F".charCodeAt(0), "F".charCodeAt(0));
             v.push(0, 0, 2); // 0.0.2
             v.push(this.width);
             v.push(this.height);
@@ -159,6 +160,12 @@ const BFF = (() => {
         */
         static from(data) {
             const _data = Array.from(data);
+            const chars = Array(3).fill().map(() => String.fromCharCode(_data.shift())).join("");
+            console.log(chars);
+            if(chars !== "BFF") {
+                alert("not bff file");
+                return;
+            }
             const a = _data.shift();
             const b = _data.shift();
             const c = _data.shift();
