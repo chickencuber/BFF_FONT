@@ -1,12 +1,12 @@
 # BFF Font specs
 ## Versioning
-the versioning for BFF font uses opaque versioning, and the first 3 bytes are always for the version
+the versioning for BFF font uses opaque versioning, and the second 3 bytes are always for the version, first 3 bytes are the name of the format
 ## Version specs
 ___
 ### 0.0.1 specs
 #### header
-1. the chars BFF(for the format name)
-2. first 3 bytes make up the version(0.0.1)
+1. first 3 bytes are the chars BFF(for the format name)
+2. second 3 bytes make up the version(0.0.1)
 3. width: u8
 4. height: u8
 5. char_amount: u8
@@ -48,8 +48,8 @@ ___
 ### 0.0.2 specs
 added variable sized glyphs
 #### header
-1. the chars BFF(for the format name)
-2. first 3 bytes make up the version(0.0.2)
+1. first 3 bytes are the chars BFF(for the format name)
+2. second 3 bytes make up the version(0.0.2)
 3. width: u8
 4. height: u8
 5. char_amount: u8
@@ -57,7 +57,7 @@ added variable sized glyphs
 1. char: u8 
 2. width: u8 # the width of the glyph, if 0 it will use the global size
 3. height: u8 # only exists if width != 0, and 0 is an invalid value
-2. line: u8[]  # the length is the number of bytes that has at least the number of bits in the width, line repeats for every length
+4. line: u8[]  # the length is the number of bytes that has at least the number of bits in the width, line repeats for every length
 #### example
 ```
 #version
