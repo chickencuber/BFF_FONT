@@ -1,18 +1,5 @@
 //this is NOT compatible with old version of the bff format!
 //this is just a better version of the old version
-/*format
-va: u8
-vb: u8
-vc: u8
-# ^makes up the version number ([a].[b].[c])
-width: u8
-height: u8
-char_amount: u8
-[
-char: u8 
-[line [u8(ceil width/8)]](height)
-](char amount)
-*/
 
 const BFF = (() => {
 
